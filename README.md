@@ -5,7 +5,7 @@
 ## Установка
 
 ```bash
-npm install passless
+npm install passlessjs
 ```
 
 Требуется Node.js 18+ (используется встроенный `fetch`).
