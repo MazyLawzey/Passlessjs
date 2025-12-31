@@ -2,8 +2,8 @@
  * Passless - A simple npm package for authentication with Google, Yandex, and Passkey (WebAuthn)
  */
 
-export { GoogleAuth, GoogleOAuthConfig } from './google';
-export { YandexAuth, YandexOAuthConfig } from './yandex';
+export { GoogleAuth, GoogleOAuthConfig, OAuthTokenResponse as GoogleOAuthTokenResponse } from './google';
+export { YandexAuth, YandexOAuthConfig, OAuthTokenResponse as YandexOAuthTokenResponse } from './yandex';
 export { PasskeyAuth, PasskeyConfig, PasskeyUser } from './passkey';
 
 import { GoogleAuth } from './google';
