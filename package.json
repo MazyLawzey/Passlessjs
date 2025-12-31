@@ -1,0 +1,31 @@
+{
+  "name": "passless",
+  "version": "1.0.0",
+  "description": "A simple npm package for authentication with Google, Yandex, and Passkey (WebAuthn)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build",
+    "test": "echo \"No tests yet\" && exit 0"
+  },
+  "keywords": [
+    "authentication",
+    "google",
+    "yandex",
+    "passkey",
+    "webauthn",
+    "oauth",
+    "login"
+  ],
+  "author": "Mazy Lawzey",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MazyLawzey/passless.git"
+  }
+}

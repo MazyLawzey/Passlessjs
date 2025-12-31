@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Passless Example</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+    }
+    .auth-section {
+      margin: 20px 0;
+      padding: 20px;
+      background: #f9f9f9;
+      border-radius: 5px;
+      border-left: 4px solid #4285f4;
+    }
+    .auth-section h2 {
+      margin-top: 0;
+      color: #333;
+      font-size: 18px;
+    }
+    button {
+      background: #4285f4;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 5px;
+      font-size: 14px;
+      cursor: pointer;
+      margin: 5px;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #357ae8;
+    }
+    .google-btn {
+      background: #4285f4;
+    }
+    .yandex-btn {
+      background: #fc3f1d;
+    }
+    .passkey-btn {
+      background: #5f6368;
+    }
+    .google-btn:hover {
+      background: #357ae8;
+    }
+    .yandex-btn:hover {
+      background: #d33619;
+    }
+    .passkey-btn:hover {
+      background: #4a4d50;
+    }
+    .output {
+      margin-top: 10px;
+      padding: 10px;
+      background: #f0f0f0;
+      border-radius: 3px;
+      font-family: monospace;
+      font-size: 12px;
+      display: none;
+    }
+    .output.show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔐 Passless Demo</h1>
+    <p class="subtitle">Authentication with Google, Yandex, and Passkey</p>
+
+    <div class="auth-section">
+      <h2>🔵 Google OAuth</h2>
+      <p>Configure your Google OAuth credentials and click the button below:</p>
+      <input type="text" id="google-client-id" placeholder="Google Client ID" style="width: 100%; padding: 8px; margin: 5px 0;">
+      <input type="text" id="google-redirect-uri" placeholder="Redirect URI" value="http://localhost:3000/callback" style="width: 100%; padding: 8px; margin: 5px 0;">
+      <button class="google-btn" onclick="loginWithGoogle()">Login with Google</button>
+      <button class="google-btn" onclick="getGoogleUrl()">Get Authorization URL</button>
+      <div id="google-output" class="output"></div>
+    </div>
+
+    <div class="auth-section" style="border-left-color: #fc3f1d;">
+      <h2>🔴 Yandex OAuth</h2>
+      <p>Configure your Yandex OAuth credentials and click the button below:</p>
+      <input type="text" id="yandex-client-id" placeholder="Yandex Client ID" style="width: 100%; padding: 8px; margin: 5px 0;">
+      <input type="text" id="yandex-redirect-uri" placeholder="Redirect URI" value="http://localhost:3000/callback" style="width: 100%; padding: 8px; margin: 5px 0;">
+      <button class="yandex-btn" onclick="loginWithYandex()">Login with Yandex</button>
+      <button class="yandex-btn" onclick="getYandexUrl()">Get Authorization URL</button>
+      <div id="yandex-output" class="output"></div>
+    </div>
+
+    <div class="auth-section" style="border-left-color: #5f6368;">
+      <h2>🎫 Passkey (WebAuthn)</h2>
+      <p>Use biometric authentication or security keys:</p>
+      <input type="text" id="passkey-user-id" placeholder="User ID" value="user-123" style="width: 100%; padding: 8px; margin: 5px 0;">
+      <input type="text" id="passkey-username" placeholder="Username/Email" value="user@example.com" style="width: 100%; padding: 8px; margin: 5px 0;">
+      <input type="text" id="passkey-displayname" placeholder="Display Name" value="John Doe" style="width: 100%; padding: 8px; margin: 5px 0;">
+      <button class="passkey-btn" onclick="checkPasskeySupport()">Check Support</button>
+      <button class="passkey-btn" onclick="registerPasskey()">Register Passkey</button>
+      <button class="passkey-btn" onclick="authenticatePasskey()">Authenticate</button>
+      <div id="passkey-output" class="output"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Import the library (in production, this would be from 'passless')
+    // For this example, we'll create mock implementations
+    
+    window.GoogleAuth = class {
+      constructor(config) {
+        this.config = config;
+      }
+      getAuthorizationUrl() {
+        const params = new URLSearchParams({
+          client_id: this.config.clientId,
+          redirect_uri: this.config.redirectUri,
+          response_type: 'code',
+          scope: this.config.scope || 'openid profile email',
+          access_type: 'offline',
+          prompt: 'consent'
+        });
+        return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+      }
+      login() {
+        const authUrl = this.getAuthorizationUrl();
+        window.open(authUrl, '_blank', 'width=500,height=600');
+      }
+    };
+
+    window.YandexAuth = class {
+      constructor(config) {
+        this.config = config;
+      }
+      getAuthorizationUrl() {
+        const params = new URLSearchParams({
+          client_id: this.config.clientId,
+          redirect_uri: this.config.redirectUri,
+          response_type: 'code',
+          scope: this.config.scope || 'login:info login:email'
+        });
+        return `https://oauth.yandex.ru/authorize?${params.toString()}`;
+      }
+      login() {
+        const authUrl = this.getAuthorizationUrl();
+        window.open(authUrl, '_blank', 'width=500,height=600');
+      }
+    };
+
+    window.PasskeyAuth = class {
+      constructor(config) {
+        this.config = config;
+      }
+      isSupported() {
+        return !!(window.PublicKeyCredential && navigator.credentials && navigator.credentials.create);
+      }
+      async register(user, challenge) {
+        const publicKeyCredentialCreationOptions = {
+          challenge: challenge,
+          rp: { name: this.config.rpName, id: window.location.hostname },
+          user: {
+            id: new TextEncoder().encode(user.id),
+            name: user.name,
+            displayName: user.displayName
+          },
+          pubKeyCredParams: [
+            { alg: -7, type: 'public-key' },
+            { alg: -257, type: 'public-key' }
+          ],
+          authenticatorSelection: {
+            authenticatorAttachment: 'platform',
+            userVerification: 'preferred',
+            requireResidentKey: false
+          },
+          timeout: 60000,
+          attestation: 'direct'
+        };
+        return await navigator.credentials.create({ publicKey: publicKeyCredentialCreationOptions });
+      }
+      async authenticate(challenge, allowCredentials) {
+        const publicKeyCredentialRequestOptions = {
+          challenge: challenge,
+          rpId: window.location.hostname,
+          allowCredentials: allowCredentials,
+          userVerification: 'preferred',
+          timeout: 60000
+        };
+        return await navigator.credentials.get({ publicKey: publicKeyCredentialRequestOptions });
+      }
+      base64ToArrayBuffer(base64) {
+        const binary = atob(base64);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) {
+          bytes[i] = binary.charCodeAt(i);
+        }
+        return bytes.buffer;
+      }
+    };
+  </script>
+
+  <script>
+    function showOutput(elementId, message) {
+      const output = document.getElementById(elementId);
+      output.textContent = message;
+      output.classList.add('show');
+    }
+
+    function loginWithGoogle() {
+      const clientId = document.getElementById('google-client-id').value;
+      const redirectUri = document.getElementById('google-redirect-uri').value;
+      
+      if (!clientId) {
+        showOutput('google-output', 'Error: Please enter a Google Client ID');
+        return;
+      }
+
+      const googleAuth = new GoogleAuth({ clientId, redirectUri });
+      googleAuth.login();
+      showOutput('google-output', 'Opening Google OAuth login...');
+    }
+
+    function getGoogleUrl() {
+      const clientId = document.getElementById('google-client-id').value;
+      const redirectUri = document.getElementById('google-redirect-uri').value;
+      
+      if (!clientId) {
+        showOutput('google-output', 'Error: Please enter a Google Client ID');
+        return;
+      }
+
+      const googleAuth = new GoogleAuth({ clientId, redirectUri });
+      const url = googleAuth.getAuthorizationUrl();
+      showOutput('google-output', 'Authorization URL:\n' + url);
+    }
+
+    function loginWithYandex() {
+      const clientId = document.getElementById('yandex-client-id').value;
+      const redirectUri = document.getElementById('yandex-redirect-uri').value;
+      
+      if (!clientId) {
+        showOutput('yandex-output', 'Error: Please enter a Yandex Client ID');
+        return;
+      }
+
+      const yandexAuth = new YandexAuth({ clientId, redirectUri });
+      yandexAuth.login();
+      showOutput('yandex-output', 'Opening Yandex OAuth login...');
+    }
+
+    function getYandexUrl() {
+      const clientId = document.getElementById('yandex-client-id').value;
+      const redirectUri = document.getElementById('yandex-redirect-uri').value;
+      
+      if (!clientId) {
+        showOutput('yandex-output', 'Error: Please enter a Yandex Client ID');
+        return;
+      }
+
+      const yandexAuth = new YandexAuth({ clientId, redirectUri });
+      const url = yandexAuth.getAuthorizationUrl();
+      showOutput('yandex-output', 'Authorization URL:\n' + url);
+    }
+
+    function checkPasskeySupport() {
+      const passkeyAuth = new PasskeyAuth({ rpName: 'Passless Demo' });
+      const supported = passkeyAuth.isSupported();
+      showOutput('passkey-output', `Passkey Support: ${supported ? '✅ Supported' : '❌ Not Supported'}`);
+    }
+
+    async function registerPasskey() {
+      const userId = document.getElementById('passkey-user-id').value;
+      const username = document.getElementById('passkey-username').value;
+      const displayName = document.getElementById('passkey-displayname').value;
+
+      const passkeyAuth = new PasskeyAuth({ rpName: 'Passless Demo' });
+      
+      if (!passkeyAuth.isSupported()) {
+        showOutput('passkey-output', 'Error: Passkey is not supported in this browser');
+        return;
+      }
+
+      try {
+        // Generate a random challenge (in production, this comes from your server)
+        const challenge = crypto.getRandomValues(new Uint8Array(32));
+        
+        showOutput('passkey-output', 'Starting passkey registration...');
+        
+        const credential = await passkeyAuth.register(
+          { id: userId, name: username, displayName: displayName },
+          challenge.buffer
+        );
+        
+        showOutput('passkey-output', '✅ Passkey registered successfully!\nCredential ID: ' + credential.id);
+      } catch (error) {
+        showOutput('passkey-output', '❌ Error: ' + error.message);
+      }
+    }
+
+    async function authenticatePasskey() {
+      const passkeyAuth = new PasskeyAuth({ rpName: 'Passless Demo' });
+      
+      if (!passkeyAuth.isSupported()) {
+        showOutput('passkey-output', 'Error: Passkey is not supported in this browser');
+        return;
+      }
+
+      try {
+        // Generate a random challenge (in production, this comes from your server)
+        const challenge = crypto.getRandomValues(new Uint8Array(32));
+        
+        showOutput('passkey-output', 'Starting passkey authentication...');
+        
+        const credential = await passkeyAuth.authenticate(challenge.buffer);
+        
+        if (credential) {
+          showOutput('passkey-output', '✅ Authentication successful!\nCredential ID: ' + credential.id);
+        } else {
+          showOutput('passkey-output', '❌ Authentication failed');
+        }
+      } catch (error) {
+        showOutput('passkey-output', '❌ Error: ' + error.message);
+      }
+    }
+  </script>
+</body>
+</html>
