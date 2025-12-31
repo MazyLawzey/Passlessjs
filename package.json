@@ -1,0 +1,26 @@
+{
+  "name": "passlessjs",
+  "version": "0.1.0",
+  "description": "Tiny helper for Google, Yandex OAuth and WebAuthn passkeys with .env support",
+  "main": "passless.js",
+  "license": "MIT",
+  "type": "commonjs",
+  "scripts": {
+    "test": "node -e \"console.log('add tests')\""
+  },
+  "keywords": [
+    "oauth",
+    "google",
+    "yandex",
+    "passkey",
+    "webauthn"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@simplewebauthn/server": "^9.0.1",
+    "dotenv": "^16.4.5",
+    "passlessjs": "^0.1.0"
+  }
+}
