@@ -1,4 +1,14 @@
 /**
+ * OAuth Token Response Interface
+ */
+export interface OAuthTokenResponse {
+  access_token: string;
+  refresh_token?: string;
+  expires_in: number;
+  token_type: string;
+}
+
+/**
  * Yandex OAuth Configuration Interface
  */
 export interface YandexOAuthConfig {
@@ -50,13 +60,14 @@ export class YandexAuth {
    * @param clientSecret Client secret
    * @returns Promise with token response
    */
-  async exchangeCodeForToken(code: string, clientSecret: string): Promise<any> {
+  async exchangeCodeForToken(code: string, clientSecret: string): Promise<OAuthTokenResponse> {
     const tokenEndpoint = 'https://oauth.yandex.ru/token';
     
     const params = new URLSearchParams({
       code: code,
       client_id: this.config.clientId,
       client_secret: clientSecret,
+      redirect_uri: this.config.redirectUri,
       grant_type: 'authorization_code'
     });
 

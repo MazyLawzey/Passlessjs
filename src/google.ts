@@ -1,4 +1,16 @@
 /**
+ * OAuth Token Response Interface
+ */
+export interface OAuthTokenResponse {
+  access_token: string;
+  refresh_token?: string;
+  expires_in: number;
+  token_type: string;
+  id_token?: string;
+  scope?: string;
+}
+
+/**
  * Google OAuth Configuration Interface
  */
 export interface GoogleOAuthConfig {
@@ -52,7 +64,7 @@ export class GoogleAuth {
    * @param clientSecret Client secret
    * @returns Promise with token response
    */
-  async exchangeCodeForToken(code: string, clientSecret: string): Promise<any> {
+  async exchangeCodeForToken(code: string, clientSecret: string): Promise<OAuthTokenResponse> {
     const tokenEndpoint = 'https://oauth2.googleapis.com/token';
     
     const params = new URLSearchParams({

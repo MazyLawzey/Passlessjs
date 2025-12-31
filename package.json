@@ -4,6 +4,11 @@
   "description": "A simple npm package for authentication with Google, Yandex, and Passkey (WebAuthn)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc",
     "prepare": "npm run build",
