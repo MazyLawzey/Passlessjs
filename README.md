@@ -126,3 +126,7 @@ app.post('/passkey/authn/verify', express.json(), async (req, res) => {
 - В примерах используются in-memory хранилища; замените на постоянную БД.
 - Для продакшена добавьте проверку срока жизни `state`/`challenge` и HTTPS.
 - Следите, чтобы `PASSLESS_ORIGIN` и `PASSLESS_RP_ID` совпадали с реальным доменом.
+
+### Расширяемость
+Passless использует провайдерную архитектуру. Любой OAuth2-провайдер
+(Apple, GitHub, Discord и др.) может быть добавлен без изменения ядра.
