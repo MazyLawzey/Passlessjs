@@ -30,7 +30,7 @@ PASSLESS_ORIGIN=http://localhost:3000
 
 ```js
 const express = require('express');
-const { Passless } = require('passless');
+const { Passless } = require('passlessjs');
 require('dotenv').config();
 
 const app = express();
