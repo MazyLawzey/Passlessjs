@@ -130,3 +130,6 @@ app.post('/passkey/authn/verify', express.json(), async (req, res) => {
 ### Расширяемость
 Passless использует провайдерную архитектуру. Любой OAuth2-провайдер
 (Apple, GitHub, Discord и др.) может быть добавлен без изменения ядра.
+
+### Pull requests
+буду рад видеть любые запросы
